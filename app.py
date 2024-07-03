@@ -129,7 +129,7 @@
     "    return jsonify({'reply': reply})\n",
     "\n",
     "if __name__ == '__main__':\n",
-    "    app.run(debug=True, port=5002)"
+    "    app.run(debug=True, port=8080)"
    ]
   },
   {
