@@ -1,5 +1,3 @@
-pip install -r requirements.txt
-
 from flask import Flask, request, jsonify, render_template, send_file
 import random
 from io import BytesIO
