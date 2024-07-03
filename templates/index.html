@@ -2,73 +2,85 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Business Bot</title>
+    <title>Business Idea Generator</title>
     <style>
         body {
             font-family: Arial, sans-serif;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            padding: 20px;
+            margin: 20px;
         }
-        #chat {
-            width: 80%;
-            max-width: 600px;
-            margin: 20px 0;
-            border: 1px solid #ccc;
-            padding: 10px;
-            border-radius: 5px;
-            background-color: #f9f9f9;
+        h1 {
+            color: #333;
         }
-        .message {
-            margin: 10px 0;
-        }
-        .user {
-            text-align: right;
-            color: blue;
-        }
-        .bot {
-            text-align: left;
-            color: green;
-        }
-        input {
-            width: 80%;
-            padding: 10px;
-            margin: 10px 0;
+        form {
+            margin-bottom: 20px;
         }
         button {
-            padding: 10px;
+            padding: 10px 20px;
+            background-color: #28a745;
+            color: #fff;
+            border: none;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #218838;
+        }
+        #response {
+            margin-top: 20px;
+            font-size: 1.2em;
+            color: #007bff;
         }
     </style>
 </head>
 <body>
-    <h1>Business Bot</h1>
-    <div id="chat"></div>
-    <input type="text" id="userInput" placeholder="Type your message...">
-    <button onclick="sendMessage()">Send</button>
-
+    <h1>Business Idea Generator</h1>
+    <form id="request-form">
+        <label for="message">Ask for a business idea, catchphrase, or logo:</label><br>
+        <input type="text" id="message" name="message" required><br><br>
+        <button type="submit">Submit</button>
+    </form>
+    <div id="response"></div>
+    <div id="logo-container"></div>
     <script>
-        function sendMessage() {
-            const userInput = document.getElementById('userInput');
-            const chat = document.getElementById('chat');
+        document.getElementById('request-form').addEventListener('submit', function(event) {
+            event.preventDefault();
+            const message = document.getElementById('message').value;
 
-            if (userInput.value.trim()) {
-                const userMessage = document.createElement('div');
-                userMessage.className = 'message user';
-                userMessage.textContent = userInput.value;
-                chat.appendChild(userMessage);
+            fetch('/chat', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ message: message }),
+            })
+            .then(response => response.json())
+            .then(data => {
+                const responseDiv = document.getElementById('response');
+                const logoContainer = document.getElementById('logo-container');
+                responseDiv.innerHTML = '';
+                logoContainer.innerHTML = '';
 
-                fetch('http://localhost:5000/chat', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ message: userInput.value })
-                })
-                .then(response => {
-                    if (response.headers.get('Content-Type').includes('image/png')) {
-                        return response.blob();
-                    } else {
-                        return response.json();
-                    }
-                })
-                .then(data => {
-                    if (data instanceof
+                if (message.toLowerCase().includes('logo')) {
+                    fetch('/chat', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({ message: 'logo' }),
+                    })
+                    .then(response => response.blob())
+                    .then(blob => {
+                        const img = document.createElement('img');
+                        img.src = URL.createObjectURL(blob);
+                        logoContainer.appendChild(img);
+                    });
+                } else {
+                    responseDiv.textContent = data.reply;
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+        });
+    </script>
+</body>
+</html>
