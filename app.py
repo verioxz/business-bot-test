@@ -2,33 +2,32 @@ from flask import Flask, request, jsonify, render_template, send_file
 import random
 from io import BytesIO
 from PIL import Image, ImageDraw, ImageFont
+from urllib.parse import quote
 
 app = Flask(__name__)
 
-ideas = [
-    "Start a podcast editing service.",
-    "Create an online course.",
-    "Develop a mobile app.",
-    "Offer freelance graphic design services.",
-    "Launch an e-commerce store."
-]
-
-phrases = [
-    "Empowering Your Future.",
-    "Innovation at its Best.",
-    "Dream Big, Achieve More.",
-    "Your Success, Our Commitment.",
-    "Where Ideas Become Reality."
-]
-
 def generate_business_idea():
+    ideas = [
+        "Start a podcast editing service.",
+        "Create an online course.",
+        "Develop a mobile app.",
+        "Offer freelance graphic design services.",
+        "Launch an e-commerce store."
+    ]
     return random.choice(ideas)
 
 def generate_catchphrase():
+    phrases = [
+        "Empowering Your Future.",
+        "Innovation at its Best.",
+        "Dream Big, Achieve More.",
+        "Your Success, Our Commitment.",
+        "Where Ideas Become Reality."
+    ]
     return random.choice(phrases)
 
 def generate_logo(text="Logo"):
-    # Create an image with a white background
+    # Create an image with white background
     img = Image.new('RGB', (200, 100), color=(255, 255, 255))
     d = ImageDraw.Draw(img)
     
@@ -69,3 +68,4 @@ def chat():
 if __name__ == '__main__':
     from waitress import serve
     serve(app, host="0.0.0.0", port=8080)
+
