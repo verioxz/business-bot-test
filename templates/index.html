@@ -2,37 +2,92 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Chat App</title>
+    <title>BizBot</title>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <style>
         body {
-            font-family: Arial, sans-serif;
-            margin: 20px;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f0f0f0;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
         }
-        #chatbox {
-            width: 100%;
+        .chat-container {
+            background-color: #fff;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            border-radius: 10px;
+            width: 400px;
+            max-width: 100%;
+            overflow: hidden;
+        }
+        .header {
+            background-color: #4CAF50;
+            color: white;
+            text-align: center;
+            padding: 10px 0;
+            font-size: 1.5em;
+        }
+        .chatbox {
+            padding: 20px;
             height: 300px;
-            border: 1px solid #ccc;
-            padding: 10px;
-            overflow-y: scroll;
+            overflow-y: auto;
+            border-bottom: 1px solid #ccc;
+        }
+        .chatbox div {
+            margin-bottom: 10px;
+        }
+        .chatbox .user-message {
+            text-align: right;
+        }
+        .chatbox .bot-message {
+            text-align: left;
+            color: #4CAF50;
+        }
+        .input-container {
+            display: flex;
+            border-top: 1px solid #ccc;
         }
         #user-input {
-            width: 100%;
+            flex: 1;
+            border: none;
             padding: 10px;
+            font-size: 1em;
+        }
+        #send-btn {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            cursor: pointer;
+        }
+        #send-btn:hover {
+            background-color: #45a049;
+        }
+        #logo {
+            display: none;
+            width: 100%;
+            margin-top: 20px;
         }
     </style>
 </head>
 <body>
-    <h1>Chat App</h1>
-    <div id="chatbox"></div>
-    <input type="text" id="user-input" placeholder="Type your message here..." />
-    <button onclick="sendMessage()">Send</button>
-    <img id="logo" style="display: none;" />
+    <div class="chat-container">
+        <div class="header">BizBot</div>
+        <div class="chatbox" id="chatbox"></div>
+        <div class="input-container">
+            <input type="text" id="user-input" placeholder="Type your message here..." />
+            <button id="send-btn" onclick="sendMessage()">Send</button>
+        </div>
+        <img id="logo" />
+    </div>
 
     <script>
         function sendMessage() {
             var userMessage = $('#user-input').val();
-            $('#chatbox').append('<div><b>You:</b> ' + userMessage + '</div>');
+            $('#chatbox').append('<div class="user-message"><b>You:</b> ' + userMessage + '</div>');
 
             $.ajax({
                 type: 'POST',
@@ -41,16 +96,20 @@
                 data: JSON.stringify({message: userMessage}),
                 success: function(response) {
                     if (userMessage.toLowerCase().includes('logo')) {
-                        $('#logo').attr('src', response).show();
+                        var reader = new FileReader();
+                        reader.onload = function(e) {
+                            $('#logo').attr('src', e.target.result).show();
+                        };
+                        reader.readAsDataURL(response);
                     } else {
-                        $('#chatbox').append('<div><b>AI:</b> ' + response.reply + '</div>');
+                        $('#chatbox').append('<div class="bot-message"><b>BizBot:</b> ' + response.reply + '</div>');
                     }
                 }
             });
 
             $('#user-input').val('');
+            $('.chatbox').scrollTop($('.chatbox')[0].scrollHeight);
         }
     </script>
 </body>
 </html>
-
