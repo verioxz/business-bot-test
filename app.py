@@ -1,8 +1,9 @@
+pip install -r requirements.txt
+
 from flask import Flask, request, jsonify, render_template, send_file
 import random
 from io import BytesIO
 from PIL import Image, ImageDraw, ImageFont
-from urllib.parse import quote
 
 app = Flask(__name__)
 
@@ -27,7 +28,7 @@ def generate_catchphrase():
     return random.choice(phrases)
 
 def generate_logo(text="Logo"):
-    # Create an image with white background
+    # Create an image with a white background
     img = Image.new('RGB', (200, 100), color=(255, 255, 255))
     d = ImageDraw.Draw(img)
     
